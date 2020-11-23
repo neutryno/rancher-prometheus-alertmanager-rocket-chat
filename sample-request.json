@@ -1,27 +1,33 @@
 {
   "status": "firing",
-  "externalURL": "http://alertmanager.example.com",
+  "externalURL": "http://rancher-monitoring-alertmanager.cattle-monitoring-system:9093",
+  "receiver": "rocketchat",
   "alerts": [
     {
+      "status": "firing",
       "labels": {
-        "alertname": "http probe 2xx",
-        "instance": "node-exporter:9100",
-        "custom": "yiehaa"
+        "alertname": "TargetDown",
+        "job": "kube-controller-manager",
+        "namespace": "cattle-monitoring-system",
+        "prometheus": "cattle-monitoring-system/rancher-monitoring-prometheus",
+        "service": "pushprox-kube-controller-manager-client",
+        "severity": "warning"
       },
       "annotations": {
-        "summary": "node-exporter:9100 - Not OK",
-        "description": "Expected HTTP status 2xx, got 0 for http://node-exporter:9100",
-        "severity": "major"
-      }
-    },
-    {
-      "labels": {
-        "alertname": "coffee_ready",
-        "instance": "ecm-brewer"
+        "message": "100% of the kube-controller-manager/pushprox-kube-controller-manager-client targets in cattle-monitoring-system namespace are down."
       },
-      "annotations": {
-        "summary": "ecm-brewer - Just made a nice cup of hot coffee"
-      }
+      "startsAt": "2020-11-10T11:42:02.587Z",
+      "endsAt": "0001-01-01T00:00:00Z",
+      "generatorURL": "http://rancher-monitoring-prometheus.cattle-monitoring-system:9090/graph?g0.expr=100+%2A+%28count+by%28job%2C+namespace%2C+service%29+%28up+%3D%3D+0%29+%2F+count+by%28job%2C+namespace%2C+service%29+%28up%29%29+%3E+10&g0.tab=1",
+      "fingerprint": "9cb26aac9939d82b"
     }
-  ]
+  ],
+  "groupLabels": {},
+  "commonLabels": {
+    "prometheus": "cattle-monitoring-system/rancher-monitoring-prometheus"
+  },
+  "commonAnnotations": {},
+  "version": "4",
+  "groupKey": "{}:{}",
+  "truncatedAlerts": 0
 }
