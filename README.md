@@ -1,4 +1,4 @@
-# Rocket.Chat Integration for Prometheus Alertmanager
+# Rocket.Chat Integration for Prometheus Alertmanager by Rancher Monitoring System
 
 A Rocket.Chat webhook integration that creates concise messages from Prometheus Alertmananager alerts generated
 by th the [Rancher](https://rancher.com/) Monitoring System (c.f. https://rancher.com/docs/rancher/v2.x/en/monitoring-alerting/v2.5/).
