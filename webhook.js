@@ -1,64 +1,78 @@
-/*
- * This script is maintained at https://github.com/puzzle/prometheus-rocket-chat/blob/master/webhook.js
- * See https://rocket.chat/docs/administrator-guides/integrations/ for a how-to.
- */
+const clusterURL = 'https://some.where.on.the.web.de/k8s/clusters/c-fwnw6';
+const apiVersion = 'v1';
+const rancherMonitoringNamespace = 'cattle-monitoring-system';
+const rancherMonitoringPort = '9090';
+
 class Script {
-  process_incoming_request({ request }) {
-    console.log(request.content);
 
-    // Return a rocket.chat message object.
-    // If channel is undefined, the default channel from the webhook configuration is used
-    return {
-      content: {
-        username: "Prometheus Alert",
-        attachments: this.getAlerts(request.content),
-        channel: request.content.alerts[0].labels.rocketchat_channel
-      }
-    };
-  }
+    process_incoming_request({request}) {
+        //console.log(request.content);
 
-  getAlerts(content) {
-    let alertColor = this.getAlertColor(content.status);
-    let attachments = [];
-    for (i = 0; i < content.alerts.length; i++) {
-      let alert = content.alerts[i];
-
-      attachments.push({
-        color: alertColor,
-        title_link: content.externalURL,
-        title: this.getAlertTitle(alert, content.status),
-        text: alert.annotations.description
-      });
+        // Return a rocket.chat message object.
+        // If channel is undefined, the default channel from the webhook configuration is used
+        return {
+            content: {
+                username: "Prometheus Alert",
+                attachments: this.getAlerts(request.content),
+                channel: undefined
+            }
+        };
     }
-    return attachments;
-  }
 
-  getAlertColor(status) {
-    if (status === "resolved") {
-      return "good";
-    } else if (status === "firing") {
-      return "danger";
-    } else {
-      return "warning";
+    getAlerts(content) {
+        let alertColor = this.getAlertColor(content.status);
+        let attachments = [];
+        for (let i = 0; i < content.alerts.length; i++) {
+            let alert = content.alerts[i];
+
+            attachments.push({
+                color: alertColor,
+                title_link: this.getLinkToPrometheus(alert),
+                title: this.getAlertTitle(alert, content.status),
+                text: alert.annotations.message
+            });
+        }
+        return attachments;
     }
-  }
 
-  getAlertTitle(alert, status) {
-    let title = "[" + this.getAlertStatus(alert, status).toUpperCase() + "] ";
-    if (!!alert.annotations.summary) {
-      title += alert.annotations.summary;
-    } else if (!!alert.labels.alertname) {
-      title += alert.labels.alertname + ": " + alert.labels.instance;
+    getAlertColor(status) {
+        if (status === "resolved") {
+            return "good";
+        } else if (status === "firing") {
+            return "danger";
+        } else {
+            return "warning";
+        }
     }
-    return title;
-  }
 
-  getAlertStatus(alert, status) {
-    if (status === "firing" && !!alert.annotations.severity) {
-      return alert.annotations.severity;
-    } else {
-      return String(status);
+    getAlertTitle(alert, status) {
+        let title = "[" + this.getAlertStatus(alert, status).toUpperCase() + "] ";
+        if (!!alert.annotations.summary) {
+            title += alert.annotations.summary;
+        } else if (!!alert.labels.alertname) {
+            title += alert.labels.alertname + ": " + alert.labels.service;
+        }
+        return title;
     }
-  }
 
+    getAlertStatus(alert, status) {
+        if (status === "firing" && !!alert.labels.severity) {
+            return String(alert.labels.severity);
+        } else {
+            return String(status);
+        }
+    }
+
+    getLinkToPrometheus(alert) {
+        let linkToRancherMonitoring = alert.generatorURL.replace(`.${rancherMonitoringNamespace}:${rancherMonitoringPort}`, `:${rancherMonitoringPort}/proxy`);
+        linkToRancherMonitoring = linkToRancherMonitoring.replace('http://', '')
+        linkToRancherMonitoring = linkToRancherMonitoring.replace('http://', '')
+
+        return `${clusterURL}/api/${apiVersion}/namespaces/${alert.labels.namespace}/services/http:${linkToRancherMonitoring}`;
+    }
 }
+
+////////////////////////////////////////////////////////////////////////
+// DO NOT COPY THE BELOW LINES IN THE ROCKET.CHAT SCRIPT FIELD !!!!!!!!!
+////////////////////////////////////////////////////////////////////////
+module.exports = new Script();
