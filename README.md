@@ -1,6 +1,7 @@
 # Rocket.Chat Integration for Prometheus Alertmanager
 
-A Rocket.Chat webhook that receives Prometheus Alertmananager alerts, creates concise messages and routes them to the actual channel.
+A Rocket.Chat webhook integration that creates concise messages from Prometheus Alertmananager alerts generated
+by th the [Rancher](https://rancher.com/) Monitoring System (c.f. https://rancher.com/docs/rancher/v2.x/en/monitoring-alerting/v2.5/).
 
 See https://rocket.chat/docs/administrator-guides/integrations/ for details on how to generate Rocket.Chat webhooks.
 
@@ -8,25 +9,26 @@ See https://rocket.chat/docs/administrator-guides/integrations/ for details on h
 
 Rocket.Chat messages produced by this webhook will have the following basic format (based on the keys in the [Alertmanager request](sample-request.json)):
 
-    [annotations.severity OR status] annotations.summary
-    annotations.description
-
-You are responsible to put all labels you would like to see into the summary or the description when you define the alert rules for Prometheus. The description is optional, leave it empty if it does not contain additional information.
-
-You may optionally set the label `rocketchat_channel` in the alert rule to route a message to a custom channel.
-
+    [labels.severity OR status] annotations.summary | labels.alertname
+    annotations.message
 
 ## Installation
 
 ### Rocket.Chat
 
-Login as admin user and go to: Administration => Integrations => New Integration => Incoming WebHook
+1. Login as admin user and go to: Administration => Integrations => New Integration => Incoming WebHook
+2. Set "Enabled" and "Script Enabled" to "True".
+3. Set channel, icons, etc. as you need.
+4. Modify the constants at the top of `webhook.js` to fit your cluster.
+```
+const clusterURL = 'https://some.where.on.the.web.de/k8s/clusters/c-fwnw6';
+const apiVersion = 'v1';
+const rancherMonitoringNamespace = 'cattle-monitoring-system';
+const rancherMonitoringPort = '9090';
+```
+5. Paste the contents of `webhook.js` into the Script field. Be aware not to paste the `module.exports = new Script();` 
+line. It is only needed for testing.
 
-Set "Enabled" and "Script Enabled" to "True".
-
-Set channel, icons, etc. as you need.
-
-Paste the contents of `webhook.js` into the Script field.
 
 Create Integration. Copy the WebHook URL and proceed to Alertmanager.
 
@@ -47,11 +49,15 @@ Reload/restart Alertmanager.
 
 ## Testing
 
+Some Jasmine unit tests exist using the `sample-request.json` as test data. Execute them running: `npm test`.
+
 To test the webhook, you may send a sample request to your Rocket.Chat instance:
 
     curl -X POST -H 'Content-Type: application/json' --data-binary @sample-request.json [webhook-url]
 
 ## License
 
-prometheus-rocket-chat is released under the terms of the MIT License.
-Copyright 2019-2020 Puzzle ITC GmbH. See `LICENSE` for further information.
+The rancher-prometheus-alertmanager-rocket-chat is released under the terms of the MIT License.
+It was forked from [prometheus-rocket-chat](https://github.com/puzzle/prometheus-rocket-chat)
+with correspondence to its license we mention the copyright of 2019-2020 Puzzle ITC GmbH here.
+See `LICENSE` for further information.
