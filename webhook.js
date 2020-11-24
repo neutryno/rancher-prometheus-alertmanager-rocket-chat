@@ -28,7 +28,7 @@ class Script {
             attachments.push({
                 color: alertColor,
                 title_link: this.getLinkToPrometheus(alert),
-                title: this.getAlertTitle(alert, content.status),
+                title: this.getAlertTitle(alert),
                 text: alert.annotations.message
             });
         }
@@ -45,22 +45,14 @@ class Script {
         }
     }
 
-    getAlertTitle(alert, status) {
-        let title = "[" + this.getAlertStatus(alert, status).toUpperCase() + "] ";
+    getAlertTitle(alert) {
+        let title = "[" + alert.labels.severity.toUpperCase() + "]: " + alert.status.toUpperCase() + " ";
         if (!!alert.annotations.summary) {
             title += alert.annotations.summary;
         } else if (!!alert.labels.alertname) {
-            title += alert.labels.alertname + ": " + alert.labels.service;
+            title += alert.labels.alertname + ": " + (!!alert.labels.service ? "service/"+alert.labels.service : "pod/"+alert.labels.pod);
         }
         return title;
-    }
-
-    getAlertStatus(alert, status) {
-        if (status === "firing" && !!alert.labels.severity) {
-            return String(alert.labels.severity);
-        } else {
-            return String(status);
-        }
     }
 
     getLinkToPrometheus(alert) {

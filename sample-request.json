@@ -20,6 +20,44 @@
       "endsAt": "0001-01-01T00:00:00Z",
       "generatorURL": "http://rancher-monitoring-prometheus.cattle-monitoring-system:9090/graph?g0.expr=100+%2A+%28count+by%28job%2C+namespace%2C+service%29+%28up+%3D%3D+0%29+%2F+count+by%28job%2C+namespace%2C+service%29+%28up%29%29+%3E+10&g0.tab=1",
       "fingerprint": "9cb26aac9939d82b"
+    },
+    {
+      "status": "resolved",
+      "labels": {
+        "alertname": "CPUThrottlingHigh",
+        "container": "node-exporter",
+        "namespace": "cattle-monitoring-system",
+        "pod": "rancher-monitoring-prometheus-node-exporter-qptjt",
+        "prometheus": "cattle-monitoring-system/rancher-monitoring-prometheus",
+        "severity": "info"
+      },
+      "annotations": {
+        "message": "27.43% throttling of CPU in namespace cattle-monitoring-system for container node-exporter in pod rancher-monitoring-prometheus-node-exporter-qptjt.",
+        "runbook_url": "https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-cputhrottlinghigh"
+      },
+      "startsAt": "2020-11-18T12:35:31.978Z",
+      "endsAt": "2020-11-18T12:38:31.978Z",
+      "generatorURL": "http://rancher-monitoring-prometheus.cattle-monitoring-system:9090/graph?g0.expr=sum+by%28container%2C+pod%2C+namespace%29+%28increase%28container_cpu_cfs_throttled_periods_total%7Bcontainer%21%3D%22%22%7D%5B5m%5D%29%29+%2F+sum+by%28container%2C+pod%2C+namespace%29+%28increase%28container_cpu_cfs_periods_total%5B5m%5D%29%29+%3E+%2825+%2F+100%29&g0.tab=1",
+      "fingerprint": "ac43cf151ecc8365"
+    },
+    {
+      "status": "firing",
+      "labels": {
+        "alertname": "CPUThrottlingHigh",
+        "container": "node-exporter",
+        "namespace": "cattle-monitoring-system",
+        "pod": "rancher-monitoring-prometheus-node-exporter-r57r5",
+        "prometheus": "cattle-monitoring-system/rancher-monitoring-prometheus",
+        "severity": "info"
+      },
+      "annotations": {
+        "message": "31.58% throttling of CPU in namespace cattle-monitoring-system for container node-exporter in pod rancher-monitoring-prometheus-node-exporter-r57r5.",
+        "runbook_url": "https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-cputhrottlinghigh"
+      },
+      "startsAt": "2020-11-18T12:36:31.978Z",
+      "endsAt": "0001-01-01T00:00:00Z",
+      "generatorURL": "http://rancher-monitoring-prometheus.cattle-monitoring-system:9090/graph?g0.expr=sum+by%28container%2C+pod%2C+namespace%29+%28increase%28container_cpu_cfs_throttled_periods_total%7Bcontainer%21%3D%22%22%7D%5B5m%5D%29%29+%2F+sum+by%28container%2C+pod%2C+namespace%29+%28increase%28container_cpu_cfs_periods_total%5B5m%5D%29%29+%3E+%2825+%2F+100%29&g0.tab=1",
+      "fingerprint": "a6f7bb7db52411e3"
     }
   ],
   "groupLabels": {},

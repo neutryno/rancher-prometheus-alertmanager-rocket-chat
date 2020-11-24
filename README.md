@@ -9,7 +9,7 @@ See https://rocket.chat/docs/administrator-guides/integrations/ for details on h
 
 Rocket.Chat messages produced by this webhook will have the following basic format (based on the keys in the [Alertmanager request](sample-request.json)):
 
-    [labels.severity OR status] annotations.summary | labels.alertname
+    [labels.severity]: status annotations.summary || labels.alertname: pod|service/labels.pod|.service
     annotations.message
 
 ## Installation
