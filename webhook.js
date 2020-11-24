@@ -50,7 +50,10 @@ class Script {
         if (!!alert.annotations.summary) {
             title += alert.annotations.summary;
         } else if (!!alert.labels.alertname) {
-            title += alert.labels.alertname + ": " + (!!alert.labels.service ? "service/"+alert.labels.service : "pod/"+alert.labels.pod);
+            title += alert.labels.alertname;
+            if (!!alert.labels.service || !!alert.labels.pod) {
+                title += ": " + (!!alert.labels.service ? "service/"+alert.labels.service : "pod/"+alert.labels.pod);
+            }
         }
         return title;
     }
